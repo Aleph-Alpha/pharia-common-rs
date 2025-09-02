@@ -12,13 +12,13 @@ pub struct IamClient {}
 #[derive(Serialize)]
 pub struct CheckUserBody<'a> {
     /// A list of permissions to query for the specific user.
-    permissions: Vec<Cow<'a, str>>,
+    permissions: Cow<'a, [Cow<'a, str>]>,
 }
 
 #[cfg(test)]
 mod tests {
     //! We currently test against the production instance of IAM
-    use std::path::PathBuf;
+    use std::{borrow::Cow, path::PathBuf};
 
     use dotenvy::dotenv;
     use reqwest::Client;
@@ -43,7 +43,7 @@ mod tests {
 
         let middleware: VCRMiddleware = VCRMiddleware::try_from(bundle.clone())
             .unwrap()
-            .with_mode(VCRMode::Record)
+            .with_mode(VCRMode::Replay)
             .with_modify_request(|request| {
                 if let Some(header) = request.headers.get_mut("authorization") {
                     *header = vec!["TOKEN_REMOVED".to_owned()];
@@ -61,7 +61,7 @@ mod tests {
             .post(format!("{IAM_PRODUCTION_URL}/check_user"))
             .bearer_auth(token)
             .json(&CheckUserBody {
-                permissions: Vec::new(),
+                permissions: Vec::new().into(),
             })
             .send()
             .await
