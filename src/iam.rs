@@ -1,78 +1,142 @@
 //! **IAM** is short for **I**dentity **A**ccess **M**anagement. This module contains opinionated
 //! adapters to connect to the internal Pharia IAM solution.
 
-use std::borrow::Cow;
+use std::{borrow::Cow, fmt::Display, path::PathBuf};
 
-use serde::Serialize;
+use anyhow::Context;
+use reqwest::Client;
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware, Middleware};
+use reqwest_vcr::{VCRMiddleware, VCRMode};
+use serde::{Deserialize, Serialize};
 
-pub struct IamClient {}
+/// URL of IAM in our production environment
+pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
-/// Body of the the IAM `/check_user` route. The token is not passed in the body but in the
-/// authorization header.
-#[derive(Serialize)]
-pub struct CheckUserBody<'a> {
-    /// A list of permissions to query for the specific user.
-    permissions: Cow<'a, [Cow<'a, str>]>,
+/// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
+pub struct IamClient {
+    /// Environment specific URL to Pharia IAM. E.g. "https://pharia-iam.product.pharia.com"
+    base_url: String,
+    /// Used for sending the http requests. We are using `ClientWithMiddleware` to allow for VCR
+    /// recording in tests.
+    http_client: ClientWithMiddleware,
 }
 
-#[cfg(test)]
-mod tests {
-    //! We currently test against the production instance of IAM
-    use std::{borrow::Cow, path::PathBuf};
+impl IamClient {
+    pub fn new(base_url: String) -> Self {
+        let client = Client::builder().use_rustls_tls().build().expect(
+            "Must be able to initialize TLS backend and resolver must be able to load system \
+            configuration.",
+        );
 
-    use dotenvy::dotenv;
-    use reqwest::Client;
-    use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
-    use reqwest_vcr::{VCRMiddleware, VCRMode};
+        let http_client: ClientWithMiddleware = ClientBuilder::new(client).build();
 
-    use super::CheckUserBody;
+        Self {
+            base_url,
+            http_client,
+        }
+    }
 
-    /// URL of IAM in our production environment
-    pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
+    pub fn with_middleware(base_url: String, middleware: impl Middleware) -> Self {
+        let client = Client::builder().use_rustls_tls().build().expect(
+            "Must be able to initialize TLS backend and resolver must be able to load system \
+            configuration.",
+        );
 
-    #[tokio::test]
-    async fn invoke_check_user() {
-        // /// A one-stop-shop for authentication, authorization and retrieving user information based on a
-        // /// token.
-        // pub fn check_user(token: impl Display) {}
-        dotenv().unwrap();
-        let token = std::env::var("PHARIA_AI_TOKEN").unwrap();
+        let http_client: ClientWithMiddleware = ClientBuilder::new(client).with(middleware).build();
 
-        let mut bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        bundle.push("tests/cassettes/invoke_check_user.vcr.json");
+        IamClient {
+            base_url,
+            http_client,
+        }
+    }
 
-        let middleware: VCRMiddleware = VCRMiddleware::try_from(bundle.clone())
+    pub fn with_vcr(base_url: String, path_to_cassette: PathBuf, vcr_mode: VCRMode) -> Self {
+        let middleware: VCRMiddleware = VCRMiddleware::try_from(path_to_cassette)
             .unwrap()
-            .with_mode(VCRMode::Replay)
+            .with_mode(vcr_mode)
             .with_modify_request(|request| {
                 if let Some(header) = request.headers.get_mut("authorization") {
                     *header = vec!["TOKEN_REMOVED".to_owned()];
                 }
             });
 
-        let client = Client::builder().use_rustls_tls().build().expect(
-            "Must be able to initialize TLS backend and resolver must be able to load system \
-            configuration.",
-        );
+        IamClient::with_middleware(base_url, middleware)
+    }
 
-        let client: ClientWithMiddleware = ClientBuilder::new(client).with(middleware).build();
-
-        let response = client
-            .post(format!("{IAM_PRODUCTION_URL}/check_user"))
+    pub async fn check_user(
+        &self,
+        token: impl Display,
+    ) -> Result<CheckUserResponseBody, anyhow::Error> {
+        let response = self
+            .http_client
+            .post(format!("{base_url}/check_user", base_url = self.base_url))
             .bearer_auth(token)
-            .json(&CheckUserBody {
+            .json(&CheckUserRequestBody {
                 permissions: Vec::new().into(),
             })
             .send()
             .await
-            .unwrap();
+            .with_context(|| "Failed to connect to Pharia IAM.")?
+            .error_for_status()?
+            .json()
+            .await?;
 
-        // let text = response.text().await.unwrap();
-        // eprintln!("{text}");
+        Ok(response)
+    }
+}
 
-        // assert_eq!(text, "ok");
-        response.error_for_status().unwrap();
+/// Body of the the IAM `/check_user` route. The token is not passed in the body but in the
+/// authorization header.
+#[derive(Serialize)]
+struct CheckUserRequestBody<'a> {
+    /// A list of permissions to query for the specific user.
+    permissions: Cow<'a, [Cow<'a, str>]>,
+}
 
-        // {\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[]}
+#[derive(Deserialize, PartialEq, Eq, Debug)]
+pub struct CheckUserResponseBody {
+    sub: String,
+    email: String,
+    email_verified: bool,
+    permissions: Vec<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use dotenvy::dotenv;
+    use reqwest_vcr::VCRMode;
+    use std::path::PathBuf;
+
+    use crate::iam::CheckUserResponseBody;
+
+    use super::{IAM_PRODUCTION_URL, IamClient};
+
+    #[tokio::test]
+    async fn valid_user_token() {
+        // We are using cassets to record the request. This makes the test easy to execute even
+        // without a connection to Pharia. Additionally it allows us to execute the test even
+        // without the specific token of the user who recorded it at hand.
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/valid_user_token.vcr.json");
+        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
+        // service.
+        let vcr_mode = VCRMode::Replay;
+
+        // Given a valid Pharia User Token
+        dotenv().unwrap();
+        let token = std::env::var("PHARIA_AI_TOKEN").unwrap();
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+
+        // When sending a check user request
+        let response = client.check_user(token).await.unwrap();
+
+        // Then we recevie an answer, identifying the user
+        let expected = CheckUserResponseBody {
+            sub: "295355180126307110".to_owned(),
+            email: "markus.klein@aleph-alpha.com".to_owned(),
+            email_verified: true,
+            permissions: vec![],
+        };
+        assert_eq!(expected, response);
     }
 }
