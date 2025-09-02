@@ -1,0 +1,49 @@
+{
+  "http_interactions": [
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"error\":\"unauthenticated\",\"error_description\":\"Invalid token\"}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "content-length": [
+            "63"
+          ],
+          "date": [
+            "Tue, 02 Sep 2025 17:51:16 GMT"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "vary": [
+            "accept-encoding"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Tue, 2 Sep 2025 17:51:16 +0000"
+    }
+  ],
+  "recorded_with": "rVCR 0.3.0"
+}

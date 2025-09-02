@@ -63,17 +63,21 @@ impl IamClient {
         IamClient::with_middleware(base_url, middleware)
     }
 
-    pub async fn check_user(
+    /// One stop shop for both authentication and authorization.
+    pub async fn check_user<'a>(
         &self,
         token: impl Display,
-    ) -> Result<CheckUserResponseBody, anyhow::Error> {
+        permissions: impl Into<Cow<'a, [Cow<'a, str>]>>,
+    ) -> Result<UserInfoAndPermissions, anyhow::Error> {
+        let request_body = CheckUserRequestBody {
+            permissions: permissions.into(),
+        };
+
         let response = self
             .http_client
             .post(format!("{base_url}/check_user", base_url = self.base_url))
             .bearer_auth(token)
-            .json(&CheckUserRequestBody {
-                permissions: Vec::new().into(),
-            })
+            .json(&request_body)
             .send()
             .await
             .with_context(|| "Failed to connect to Pharia IAM.")?
@@ -93,8 +97,10 @@ struct CheckUserRequestBody<'a> {
     permissions: Cow<'a, [Cow<'a, str>]>,
 }
 
+/// Returned by [`IamClient::check_user`]. Contains information describing the user as well as the
+/// union of the queried permissions and the privileges of the user.
 #[derive(Deserialize, PartialEq, Eq, Debug)]
-pub struct CheckUserResponseBody {
+pub struct UserInfoAndPermissions {
     sub: String,
     email: String,
     email_verified: bool,
@@ -107,7 +113,7 @@ mod tests {
     use reqwest_vcr::VCRMode;
     use std::path::PathBuf;
 
-    use crate::iam::CheckUserResponseBody;
+    use crate::iam::UserInfoAndPermissions;
 
     use super::{IAM_PRODUCTION_URL, IamClient};
 
@@ -128,15 +134,37 @@ mod tests {
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
 
         // When sending a check user request
-        let response = client.check_user(token).await.unwrap();
+        let response = client.check_user(token, &[]).await.unwrap();
 
         // Then we recevie an answer, identifying the user
-        let expected = CheckUserResponseBody {
+        let expected = UserInfoAndPermissions {
             sub: "295355180126307110".to_owned(),
             email: "markus.klein@aleph-alpha.com".to_owned(),
             email_verified: true,
             permissions: vec![],
         };
         assert_eq!(expected, response);
+    }
+
+    #[tokio::test]
+    async fn invalid_user_token() {
+        // We are using cassets to record the request. This makes the test easy to execute even
+        // without a connection to Pharia. Additionally it allows us to execute the test even
+        // without the specific token of the user who recorded it at hand.
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/invalid_user_token.vcr.json");
+        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
+        // service.
+        let vcr_mode = VCRMode::Replay;
+
+        // Given a valid Pharia User Token
+        dotenv().unwrap();
+        let token = "I-AM-AN-INVALID-TOKEN";
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+
+        // When sending a check user request
+        let result = client.check_user(token, &[]).await;
+
+        assert!(result.is_err())
     }
 }
