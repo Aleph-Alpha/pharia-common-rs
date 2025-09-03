@@ -13,7 +13,7 @@ pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
 /// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
 pub struct IamClient {
-    /// Environment specific URL to Pharia IAM. E.g. "https://pharia-iam.product.pharia.com"
+    /// Environment specific URL to Pharia IAM. E.g. <https://pharia-iam.product.pharia.com>
     base_url: String,
     /// Used for sending the http requests. We are using `ClientWithMiddleware` to allow for VCR
     /// recording in tests.
@@ -133,7 +133,7 @@ pub enum CheckUserError {
 mod tests {
     use dotenvy::dotenv;
     use reqwest_vcr::VCRMode;
-    use std::path::PathBuf;
+    use std::{env, path::PathBuf};
 
     use crate::iam::{CheckUserError, UserInfoAndPermissions};
 
@@ -150,13 +150,11 @@ mod tests {
         // service.
         let vcr_mode = VCRMode::Replay;
 
-        // Given a valid Pharia User Token
-        dotenv().unwrap();
-        let token = std::env::var("PHARIA_AI_TOKEN").unwrap();
+        // Given a client
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
 
-        // When sending a check user request
-        let response = client.check_user(token, &[]).await.unwrap();
+        // When sending a check user request with a valid token
+        let response = client.check_user(token(), &[]).await.unwrap();
 
         // Then we recevie an answer, identifying the user
         let expected = UserInfoAndPermissions {
@@ -189,5 +187,11 @@ mod tests {
 
         // Then the user is unauthenticated
         assert!(matches!(result, Err(CheckUserError::Unauthenticated)))
+    }
+
+    /// The user (developers) token from the environment
+    fn token() -> String {
+        dotenv().unwrap();
+        env::var("PHARIA_AI_TOKEN").unwrap()
     }
 }
