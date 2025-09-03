@@ -3,10 +3,6 @@ name = "pharia"
 version = "0.1.0"
 edition = "2024"
 
-[dev-dependencies]
-dotenvy = "0.15.7"
-tokio = { version = "1.47.1", features = ["macros", "test-util"] }
-
 [dependencies]
 # We use this for opaque errors caused by the runtime
 anyhow = "1.0.99"
@@ -25,10 +21,14 @@ reqwest-middleware = { version = "0.4.2", features = [
     "json",
     "http2",
 ] }
-# We use reqwest-vcr middleware to record tests. This is not a dev dependency, because we want to
-# expose this as a convinience to our users, too.
-reqwest-vcr = "0.3.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.143"
 # We use this for custom domain specific errors
 thiserror = "2.0.16"
+
+[dev-dependencies]
+dotenvy = "0.15.7"
+tokio = { version = "1.47.1", features = ["macros", "test-util"] }
+# We use reqwest-vcr middleware to record tests. This is not a dev dependency, because we want to
+# expose this as a convinience to our users, too.
+reqwest-vcr = "0.3.0"

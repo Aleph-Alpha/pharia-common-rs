@@ -1,11 +1,10 @@
 //! **IAM** is short for **I**dentity **A**ccess **M**anagement. This module contains opinionated
 //! adapters to connect to the internal Pharia IAM solution.
 
-use std::{borrow::Cow, fmt::Display, path::PathBuf};
+use std::{borrow::Cow, fmt::Display};
 
 use reqwest::{Client, StatusCode};
-use reqwest_middleware::{ClientBuilder, ClientWithMiddleware, Middleware};
-use reqwest_vcr::{VCRMiddleware, VCRMode};
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::{Deserialize, Serialize};
 
 /// URL of IAM in our production environment
@@ -35,8 +34,13 @@ impl IamClient {
         }
     }
 
-    pub fn with_vcr(base_url: String, path_to_cassette: PathBuf, vcr_mode: VCRMode) -> Self {
-        let middleware: VCRMiddleware = VCRMiddleware::try_from(path_to_cassette)
+    #[cfg(test)]
+    pub fn with_vcr(
+        base_url: String,
+        path_to_cassette: std::path::PathBuf,
+        vcr_mode: reqwest_vcr::VCRMode,
+    ) -> Self {
+        let middleware = reqwest_vcr::VCRMiddleware::try_from(path_to_cassette)
             .unwrap()
             .with_mode(vcr_mode)
             .with_modify_request(|request| {
@@ -48,7 +52,8 @@ impl IamClient {
         IamClient::with_middleware(base_url, middleware)
     }
 
-    fn with_middleware(base_url: String, middleware: impl Middleware) -> Self {
+    #[cfg(test)]
+    fn with_middleware(base_url: String, middleware: impl reqwest_middleware::Middleware) -> Self {
         let client = Client::builder().use_rustls_tls().build().expect(
             "Must be able to initialize TLS backend and resolver must be able to load system \
             configuration.",
@@ -158,9 +163,9 @@ mod tests {
     use reqwest_vcr::VCRMode;
     use std::{env, path::PathBuf};
 
-    use crate::iam::{CheckUserError, Permission, UserInfoAndPermissions};
-
-    use super::{IAM_PRODUCTION_URL, IamClient};
+    use super::{
+        CheckUserError, IAM_PRODUCTION_URL, IamClient, Permission, UserInfoAndPermissions,
+    };
 
     #[tokio::test]
     async fn valid_user_token() {
