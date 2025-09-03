@@ -1,0 +1,566 @@
+{
+  "http_interactions": [
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"error\":\"unauthenticated\",\"error_description\":\"Invalid token\"}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 401,
+          "message": "Unauthorized"
+        },
+        "headers": {
+          "date": [
+            "Wed, 03 Sep 2025 07:13:49 GMT"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "63"
+          ],
+          "vary": [
+            "accept-encoding"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[\"Foobar\",\"Kernel\",\"Model-access\"]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:13:49 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "Failed to deserialize the JSON body into the target type: permissions[0]: invalid type: string \"Foobar\", expected struct Permission at line 1 column 24"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 422,
+          "message": "Unprocessable Entity"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "151"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 07:18:31 GMT"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[\"Foobar\",\"Kernel\",\"Model-access\"]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:18:31 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "content-length": [
+            "106"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 07:19:34 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:19:34 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "date": [
+            "Wed, 03 Sep 2025 07:19:44 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "106"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:19:44 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "Failed to deserialize the JSON body into the target type: permissions[0]: invalid type: string \"kernel\", expected struct Permission at line 1 column 24"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 422,
+          "message": "Unprocessable Entity"
+        },
+        "headers": {
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ],
+          "content-length": [
+            "151"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 07:19:56 GMT"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[\"kernel\"]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:19:56 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "Failed to deserialize the JSON body into the target type: permissions[0]: invalid type: string \"kernel\", expected struct Permission at line 1 column 24"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 422,
+          "message": "Unprocessable Entity"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ],
+          "content-length": [
+            "151"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 07:24:15 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[\"kernel\"]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 07:24:15 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"Kernel\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "129"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:02:16 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"Kernel\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:02:16 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"ExecuteJob\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "content-length": [
+            "133"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:44:33 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"ExecuteJob\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:44:33 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"},{\"permission\":\"Foobar\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "187"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:45:19 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"},{\"permission\":\"Foobar\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:45:19 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "content-length": [
+            "163"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:46:28 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:46:28 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:47:34 GMT"
+          ],
+          "content-length": [
+            "163"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"ExecuteJob\"},{\"permission\":\"KernelAccess\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:47:34 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:51:25 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-length": [
+            "163"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 08:51:25 +0000"
+    }
+  ],
+  "recorded_with": "rVCR 0.3.0"
+}

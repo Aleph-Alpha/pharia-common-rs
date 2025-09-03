@@ -66,11 +66,9 @@ impl IamClient {
     pub async fn check_user<'a>(
         &self,
         token: impl Display,
-        permissions: impl Into<Cow<'a, [Cow<'a, str>]>>,
+        permissions: &'a [Permission<'a>],
     ) -> Result<UserInfoAndPermissions, CheckUserError> {
-        let request_body = CheckUserRequestBody {
-            permissions: permissions.into(),
-        };
+        let request_body = CheckUserRequestBody { permissions };
 
         let response = self
             .http_client
@@ -87,6 +85,14 @@ impl IamClient {
         // the other connection errors
         if response.status() == StatusCode::UNAUTHORIZED {
             return Err(CheckUserError::Unauthenticated);
+        }
+
+        if response.status() == StatusCode::UNPROCESSABLE_ENTITY {
+            use anyhow::anyhow;
+            eprintln!("{}", response.text().await.unwrap());
+            return Err(CheckUserError::ConnectionError(anyhow!(
+                "Unprocessable entity"
+            )));
         }
 
         // Map all other thing to ConnectionError
@@ -108,7 +114,7 @@ impl IamClient {
 #[derive(Serialize)]
 struct CheckUserRequestBody<'a> {
     /// A list of permissions to query for the specific user.
-    permissions: Cow<'a, [Cow<'a, str>]>,
+    permissions: &'a [Permission<'a>],
 }
 
 /// Returned by [`IamClient::check_user`]. Contains information describing the user as well as the
@@ -118,7 +124,7 @@ pub struct UserInfoAndPermissions {
     sub: String,
     email: String,
     email_verified: bool,
-    permissions: Vec<String>,
+    permissions: Vec<Permission<'static>>,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -129,13 +135,30 @@ pub enum CheckUserError {
     ConnectionError(anyhow::Error),
 }
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[serde(tag = "permission")]
+pub enum Permission<'a> {
+    /// The kernel uses this permission to authorize skill execution
+    KernelAccess,
+    /// Used by inference to decide wether a user is authorized to perform any kind of inference
+    /// requests.
+    ExecuteJob,
+    /// Is this user allowed to use this model? "*" Can be used as a model name in order to indicate
+    /// access to all models.
+    AccessModel { model: Cow<'a, str> },
+    HasRelation {
+        relation: Cow<'a, str>,
+        object: Cow<'a, str>,
+    },
+}
+
 #[cfg(test)]
 mod tests {
     use dotenvy::dotenv;
     use reqwest_vcr::VCRMode;
     use std::{env, path::PathBuf};
 
-    use crate::iam::{CheckUserError, UserInfoAndPermissions};
+    use crate::iam::{CheckUserError, Permission, UserInfoAndPermissions};
 
     use super::{IAM_PRODUCTION_URL, IamClient};
 
@@ -187,6 +210,39 @@ mod tests {
 
         // Then the user is unauthenticated
         assert!(matches!(result, Err(CheckUserError::Unauthenticated)))
+    }
+
+    #[tokio::test]
+    async fn asking_for_permissions() {
+        // We are using cassets to record the request. This makes the test easy to execute even
+        // without a connection to Pharia. Additionally it allows us to execute the test even
+        // without the specific token of the user who recorded it at hand.
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/asking_for_permissions.vcr.json");
+        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
+        // service.
+        let vcr_mode = VCRMode::Replay;
+
+        // Given a client
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+
+        // When sending a check user request with a token authorized for all permission it is
+        // asking for.
+        let response = client
+            .check_user(token(), &[Permission::KernelAccess, Permission::ExecuteJob])
+            .await
+            .unwrap();
+
+        // Then we recevie an answer, identifying the user and all the permissions are visible
+        // in the answer.
+        let expected = UserInfoAndPermissions {
+            sub: "295355180126307110".to_owned(),
+            email: "markus.klein@aleph-alpha.com".to_owned(),
+            email_verified: true,
+            // It seems the IAM backend maintains order. So this assertion works.
+            permissions: vec![Permission::KernelAccess, Permission::ExecuteJob],
+        };
+        assert_eq!(expected, response);
     }
 
     /// The user (developers) token from the environment

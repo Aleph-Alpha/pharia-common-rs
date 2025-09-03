@@ -1,3 +1,3 @@
 mod iam;
 
-pub use iam::{IAM_PRODUCTION_URL, IamClient};
+pub use iam::{CheckUserError, IAM_PRODUCTION_URL, IamClient, Permission, UserInfoAndPermissions};
