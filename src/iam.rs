@@ -3,8 +3,7 @@
 
 use std::{borrow::Cow, fmt::Display, path::PathBuf};
 
-use anyhow::Context;
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware, Middleware};
 use reqwest_vcr::{VCRMiddleware, VCRMode};
 use serde::{Deserialize, Serialize};
@@ -36,20 +35,6 @@ impl IamClient {
         }
     }
 
-    pub fn with_middleware(base_url: String, middleware: impl Middleware) -> Self {
-        let client = Client::builder().use_rustls_tls().build().expect(
-            "Must be able to initialize TLS backend and resolver must be able to load system \
-            configuration.",
-        );
-
-        let http_client: ClientWithMiddleware = ClientBuilder::new(client).with(middleware).build();
-
-        IamClient {
-            base_url,
-            http_client,
-        }
-    }
-
     pub fn with_vcr(base_url: String, path_to_cassette: PathBuf, vcr_mode: VCRMode) -> Self {
         let middleware: VCRMiddleware = VCRMiddleware::try_from(path_to_cassette)
             .unwrap()
@@ -63,12 +48,26 @@ impl IamClient {
         IamClient::with_middleware(base_url, middleware)
     }
 
+    fn with_middleware(base_url: String, middleware: impl Middleware) -> Self {
+        let client = Client::builder().use_rustls_tls().build().expect(
+            "Must be able to initialize TLS backend and resolver must be able to load system \
+            configuration.",
+        );
+
+        let http_client: ClientWithMiddleware = ClientBuilder::new(client).with(middleware).build();
+
+        IamClient {
+            base_url,
+            http_client,
+        }
+    }
+
     /// One stop shop for both authentication and authorization.
     pub async fn check_user<'a>(
         &self,
         token: impl Display,
         permissions: impl Into<Cow<'a, [Cow<'a, str>]>>,
-    ) -> Result<UserInfoAndPermissions, anyhow::Error> {
+    ) -> Result<UserInfoAndPermissions, CheckUserError> {
         let request_body = CheckUserRequestBody {
             permissions: permissions.into(),
         };
@@ -80,12 +79,27 @@ impl IamClient {
             .json(&request_body)
             .send()
             .await
-            .with_context(|| "Failed to connect to Pharia IAM.")?
-            .error_for_status()?
-            .json()
-            .await?;
+            .map_err(|e| CheckUserError::ConnectionError(e.into()))?;
 
-        Ok(response)
+        // A long standing quirk of the HTTP standard: Unauthorized 401 actually means
+        // "unauthenticated". We consider this a domain specific logic error, rather than a runtime
+        // error, which should be fixed with retry. Therfore we categorize this error differently
+        // the other connection errors
+        if response.status() == StatusCode::UNAUTHORIZED {
+            return Err(CheckUserError::Unauthenticated);
+        }
+
+        // Map all other thing to ConnectionError
+        response
+            .error_for_status_ref()
+            .map_err(|e| CheckUserError::ConnectionError(e.into()))?;
+
+        let user_info = response
+            .json()
+            .await
+            .map_err(|e| CheckUserError::ConnectionError(e.into()))?;
+
+        Ok(user_info)
     }
 }
 
@@ -107,13 +121,21 @@ pub struct UserInfoAndPermissions {
     permissions: Vec<String>,
 }
 
+#[derive(thiserror::Error, Debug)]
+pub enum CheckUserError {
+    #[error("User is Unauthenticated. Token is invalid")]
+    Unauthenticated,
+    #[error("Failed to retrieve information from Pharia IAM. {0:#}")]
+    ConnectionError(anyhow::Error),
+}
+
 #[cfg(test)]
 mod tests {
     use dotenvy::dotenv;
     use reqwest_vcr::VCRMode;
     use std::path::PathBuf;
 
-    use crate::iam::UserInfoAndPermissions;
+    use crate::iam::{CheckUserError, UserInfoAndPermissions};
 
     use super::{IAM_PRODUCTION_URL, IamClient};
 
@@ -165,6 +187,7 @@ mod tests {
         // When sending a check user request
         let result = client.check_user(token, &[]).await;
 
-        assert!(result.is_err())
+        // Then the user is unauthenticated
+        assert!(matches!(result, Err(CheckUserError::Unauthenticated)))
     }
 }
