@@ -18,11 +18,11 @@
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
           ],
-          "content-length": [
-            "63"
-          ],
           "vary": [
             "accept-encoding"
+          ],
+          "content-length": [
+            "63"
           ]
         }
       },
@@ -34,11 +34,11 @@
         },
         "method": "post",
         "headers": {
-          "content-type": [
-            "application/json"
-          ],
           "authorization": [
             "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
           ]
         }
       },
@@ -56,20 +56,20 @@
           "message": "Unprocessable Entity"
         },
         "headers": {
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
-          ],
-          "content-length": [
-            "151"
           ],
           "date": [
             "Wed, 03 Sep 2025 07:18:31 GMT"
           ],
+          "content-length": [
+            "151"
+          ],
           "vary": [
             "accept-encoding"
-          ],
-          "content-type": [
-            "text/plain; charset=utf-8"
           ]
         }
       },
@@ -103,6 +103,12 @@
           "message": "OK"
         },
         "headers": {
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 07:19:34 GMT"
+          ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
           ],
@@ -111,12 +117,6 @@
           ],
           "content-length": [
             "106"
-          ],
-          "vary": [
-            "accept-encoding"
-          ],
-          "date": [
-            "Wed, 03 Sep 2025 07:19:34 GMT"
           ]
         }
       },
@@ -128,11 +128,11 @@
         },
         "method": "post",
         "headers": {
-          "content-type": [
-            "application/json"
-          ],
           "authorization": [
             "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
           ]
         }
       },
@@ -150,20 +150,20 @@
           "message": "OK"
         },
         "headers": {
+          "content-type": [
+            "application/json"
+          ],
           "date": [
             "Wed, 03 Sep 2025 07:19:44 GMT"
           ],
-          "content-type": [
-            "application/json"
+          "content-length": [
+            "106"
           ],
           "vary": [
             "accept-encoding"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
-          ],
-          "content-length": [
-            "106"
           ]
         }
       },
@@ -175,11 +175,11 @@
         },
         "method": "post",
         "headers": {
-          "content-type": [
-            "application/json"
-          ],
           "authorization": [
             "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
           ]
         }
       },
@@ -197,17 +197,17 @@
           "message": "Unprocessable Entity"
         },
         "headers": {
-          "content-type": [
-            "text/plain; charset=utf-8"
-          ],
           "content-length": [
             "151"
           ],
-          "vary": [
-            "accept-encoding"
-          ],
           "date": [
             "Wed, 03 Sep 2025 07:19:56 GMT"
+          ],
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ],
+          "vary": [
+            "accept-encoding"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -244,12 +244,6 @@
           "message": "Unprocessable Entity"
         },
         "headers": {
-          "strict-transport-security": [
-            "max-age=31536000; includeSubDomains"
-          ],
-          "content-type": [
-            "text/plain; charset=utf-8"
-          ],
           "content-length": [
             "151"
           ],
@@ -258,6 +252,12 @@
           ],
           "date": [
             "Wed, 03 Sep 2025 07:24:15 GMT"
+          ],
+          "content-type": [
+            "text/plain; charset=utf-8"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ]
         }
       },
@@ -291,14 +291,14 @@
           "message": "OK"
         },
         "headers": {
-          "strict-transport-security": [
-            "max-age=31536000; includeSubDomains"
-          ],
           "content-length": [
             "129"
           ],
           "content-type": [
             "application/json"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ],
           "vary": [
             "accept-encoding"
@@ -338,17 +338,17 @@
           "message": "OK"
         },
         "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:44:33 GMT"
+          ],
           "content-length": [
             "133"
           ],
           "vary": [
             "accept-encoding"
-          ],
-          "date": [
-            "Wed, 03 Sep 2025 08:44:33 GMT"
-          ],
-          "content-type": [
-            "application/json"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
@@ -363,11 +363,11 @@
         },
         "method": "post",
         "headers": {
-          "content-type": [
-            "application/json"
-          ],
           "authorization": [
             "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
           ]
         }
       },
@@ -388,17 +388,17 @@
           "vary": [
             "accept-encoding"
           ],
-          "content-type": [
-            "application/json"
-          ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
           ],
-          "content-length": [
-            "187"
-          ],
           "date": [
             "Wed, 03 Sep 2025 08:45:19 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "content-length": [
+            "187"
           ]
         }
       },
@@ -432,17 +432,17 @@
           "message": "OK"
         },
         "headers": {
-          "strict-transport-security": [
-            "max-age=31536000; includeSubDomains"
-          ],
           "content-type": [
             "application/json"
           ],
-          "content-length": [
-            "163"
-          ],
           "vary": [
             "accept-encoding"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-length": [
+            "163"
           ],
           "date": [
             "Wed, 03 Sep 2025 08:46:28 GMT"
@@ -479,20 +479,20 @@
           "message": "OK"
         },
         "headers": {
-          "vary": [
-            "accept-encoding"
-          ],
           "content-type": [
             "application/json"
-          ],
-          "date": [
-            "Wed, 03 Sep 2025 08:47:34 GMT"
           ],
           "content-length": [
             "163"
           ],
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 08:47:34 GMT"
           ]
         }
       },
@@ -504,11 +504,11 @@
         },
         "method": "post",
         "headers": {
-          "authorization": [
-            "TOKEN_REMOVED"
-          ],
           "content-type": [
             "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
           ]
         }
       },
@@ -529,17 +529,17 @@
           "strict-transport-security": [
             "max-age=31536000; includeSubDomains"
           ],
-          "date": [
-            "Wed, 03 Sep 2025 08:51:25 GMT"
+          "content-length": [
+            "163"
           ],
           "content-type": [
             "application/json"
           ],
+          "date": [
+            "Wed, 03 Sep 2025 08:51:25 GMT"
+          ],
           "vary": [
             "accept-encoding"
-          ],
-          "content-length": [
-            "163"
           ]
         }
       },
@@ -551,15 +551,62 @@
         },
         "method": "post",
         "headers": {
-          "authorization": [
-            "TOKEN_REMOVED"
-          ],
           "content-type": [
             "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
           ]
         }
       },
       "recorded_at": "Wed, 3 Sep 2025 08:51:25 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "content-length": [
+            "257"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Wed, 03 Sep 2025 11:59:42 GMT"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Wed, 3 Sep 2025 11:59:42 +0000"
     }
   ],
   "recorded_with": "rVCR 0.3.0"

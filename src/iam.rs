@@ -136,13 +136,15 @@ pub struct UserInfoAndPermissions {
 pub enum CheckUserError {
     #[error("User is Unauthenticated. Token is invalid")]
     Unauthenticated,
-    #[error("Failed to retrieve information from Pharia IAM. {0:#}")]
+    #[error("User could not be authenticated due to connectivity issue:\n{0:#}")]
     ConnectionError(anyhow::Error),
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone, Hash)]
 #[serde(tag = "permission")]
 pub enum Permission<'a> {
+    Assistant,
+    Numinous,
     /// The kernel uses this permission to authorize skill execution
     KernelAccess,
     /// Used by inference to decide wether a user is authorized to perform any kind of inference
@@ -150,7 +152,9 @@ pub enum Permission<'a> {
     ExecuteJob,
     /// Is this user allowed to use this model? "*" Can be used as a model name in order to indicate
     /// access to all models.
-    AccessModel { model: Cow<'a, str> },
+    AccessModel {
+        model: Cow<'a, str>,
+    },
     HasRelation {
         relation: Cow<'a, str>,
         object: Cow<'a, str>,
@@ -230,13 +234,17 @@ mod tests {
 
         // Given a client
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let permissions = [
+            Permission::KernelAccess,
+            Permission::ExecuteJob,
+            Permission::Assistant,
+            Permission::Numinous,
+            Permission::AccessModel { model: "*".into() },
+        ];
 
         // When sending a check user request with a token authorized for all permission it is
         // asking for.
-        let response = client
-            .check_user(token(), &[Permission::KernelAccess, Permission::ExecuteJob])
-            .await
-            .unwrap();
+        let response = client.check_user(token(), &permissions).await.unwrap();
 
         // Then we recevie an answer, identifying the user and all the permissions are visible
         // in the answer.
@@ -245,7 +253,7 @@ mod tests {
             email: "markus.klein@aleph-alpha.com".to_owned(),
             email_verified: true,
             // It seems the IAM backend maintains order. So this assertion works.
-            permissions: vec![Permission::KernelAccess, Permission::ExecuteJob],
+            permissions: permissions.to_vec(),
         };
         assert_eq!(expected, response);
     }
