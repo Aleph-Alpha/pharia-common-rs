@@ -287,7 +287,7 @@ mod tests {
             email: None,
             email_verified: None,
             // It seems the IAM backend maintains order. So this assertion works.
-            permissions: [].to_vec(),
+            permissions: permissions.to_vec(),
         };
         assert_eq!(expected, response);
     }
