@@ -127,8 +127,8 @@ struct CheckUserRequestBody<'a> {
 #[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct UserInfoAndPermissions {
     sub: String,
-    email: String,
-    email_verified: bool,
+    email: Option<String>,
+    email_verified: Option<bool>,
     permissions: Vec<Permission<'static>>,
 }
 
@@ -191,8 +191,8 @@ mod tests {
         // Then we recevie an answer, identifying the user
         let expected = UserInfoAndPermissions {
             sub: "295355180126307110".to_owned(),
-            email: "markus.klein@aleph-alpha.com".to_owned(),
-            email_verified: true,
+            email: Some("markus.klein@aleph-alpha.com".to_owned()),
+            email_verified: Some(true),
             permissions: vec![],
         };
         assert_eq!(expected, response);
@@ -250,12 +250,55 @@ mod tests {
         // in the answer.
         let expected = UserInfoAndPermissions {
             sub: "295355180126307110".to_owned(),
-            email: "markus.klein@aleph-alpha.com".to_owned(),
-            email_verified: true,
+            email: Some("markus.klein@aleph-alpha.com".to_owned()),
+            email_verified: Some(true),
             // It seems the IAM backend maintains order. So this assertion works.
             permissions: permissions.to_vec(),
         };
         assert_eq!(expected, response);
+    }
+
+    #[tokio::test]
+    async fn asking_for_permissions_as_service() {
+        // We are using cassets to record the request. This makes the test easy to execute even
+        // without a connection to Pharia. Additionally it allows us to execute the test even
+        // without the specific token of the user who recorded it at hand.
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/asking_for_permissions_as_service.vcr.json");
+        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
+        // service.
+        let vcr_mode = VCRMode::Replay;
+
+        // Given a client
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let permissions = [Permission::Assistant, Permission::Numinous];
+
+        // When sending a check user request with a token authorized for all permission it is
+        // asking for.
+        let response = client
+            .check_user(service_token(), &permissions)
+            .await
+            .unwrap();
+
+        // Then we recevie an answer, identifying the user and all the permissions are visible
+        // in the answer.
+        let expected = UserInfoAndPermissions {
+            sub: "336362361919115278".to_owned(),
+            email: None,
+            email_verified: None,
+            // It seems the IAM backend maintains order. So this assertion works.
+            permissions: [].to_vec(),
+        };
+        assert_eq!(expected, response);
+    }
+
+    /// Service token used for recording cassettes
+    ///
+    /// Credentials: pharia-internal-rs-test
+    /// The user (developers) token from the environment
+    fn service_token() -> String {
+        dotenv().unwrap();
+        env::var("PHARIA_AI_SERVICE_TOKEN").unwrap()
     }
 
     /// The user (developers) token from the environment

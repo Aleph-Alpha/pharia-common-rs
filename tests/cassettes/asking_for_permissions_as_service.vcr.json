@@ -1,0 +1,287 @@
+{
+  "http_interactions": [
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "date": [
+            "Thu, 04 Sep 2025 11:05:24 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-length": [
+            "150"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:05:24 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "content-length": [
+            "150"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Thu, 04 Sep 2025 11:16:24 GMT"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:16:24 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Thu, 04 Sep 2025 11:21:31 GMT"
+          ],
+          "content-length": [
+            "80"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "authorization": [
+            "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:21:31 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "vary": [
+            "accept-encoding"
+          ],
+          "date": [
+            "Thu, 04 Sep 2025 11:22:03 GMT"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "content-length": [
+            "80"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:22:03 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "content-length": [
+            "80"
+          ],
+          "date": [
+            "Thu, 04 Sep 2025 11:22:58 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:22:58 +0000"
+    },
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"336362361919115278\",\"email\":null,\"email_verified\":null,\"permissions\":[]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "date": [
+            "Thu, 04 Sep 2025 11:26:14 GMT"
+          ],
+          "content-type": [
+            "application/json"
+          ],
+          "content-length": [
+            "80"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"Assistant\"},{\"permission\":\"Numinous\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Thu, 4 Sep 2025 11:26:14 +0000"
+    }
+  ],
+  "recorded_with": "rVCR 0.3.0"
+}
