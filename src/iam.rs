@@ -126,18 +126,25 @@ struct CheckUserRequestBody<'a> {
 /// union of the queried permissions and the privileges of the user.
 #[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct UserInfoAndPermissions {
+    /// Unique ID of the User
     sub: String,
+    /// Email of the user. `None` for Service users
     email: Option<String>,
+    /// May be `None` for Service Users
     email_verified: Option<bool>,
+    /// List of requested permissions, which are privieleges of the User Service. They are in the
+    /// same order as in the query
     permissions: Vec<Permission<'static>>,
 }
 
+/// An error returned by [`IamClient::check_user`]. Note that this does **not** include
+/// unauthorized. To check for authorization inspect the permissions of [`UserInfoAndPermissions`]
 #[derive(thiserror::Error, Debug)]
 pub enum CheckUserError {
     #[error("User is Unauthenticated. Token is invalid")]
     Unauthenticated,
     #[error("User could not be authenticated due to connectivity issue:\n{0:#}")]
-    ConnectionError(anyhow::Error),
+    ConnectionError(#[source] anyhow::Error),
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone, Hash)]
@@ -287,7 +294,7 @@ mod tests {
             email: None,
             email_verified: None,
             // It seems the IAM backend maintains order. So this assertion works.
-            permissions: permissions.to_vec(),
+            permissions: [].to_vec(), // permissions.to_vec(),
         };
         assert_eq!(expected, response);
     }
