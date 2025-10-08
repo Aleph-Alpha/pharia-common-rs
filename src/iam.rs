@@ -304,7 +304,7 @@ mod tests {
     /// Credentials: pharia-internal-rs-test
     /// The user (developers) token from the environment
     fn service_token() -> String {
-        _ = dotenv().unwrap();
+        _ = dotenv();
         env::var("PHARIA_AI_SERVICE_TOKEN").unwrap_or_else(|_| "DUMMY".to_owned())
     }
 
