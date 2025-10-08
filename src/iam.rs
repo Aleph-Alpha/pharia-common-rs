@@ -212,8 +212,7 @@ mod tests {
         let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         cassette_path.push("tests/cassettes/invalid_user_token.vcr.json");
 
-        // Given a valid Pharia User Token
-        dotenv().unwrap();
+        // Given an invalid Pharia User Token
         let token = "I-AM-AN-INVALID-TOKEN";
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
 
