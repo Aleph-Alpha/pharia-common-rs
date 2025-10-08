@@ -304,13 +304,14 @@ mod tests {
     /// Credentials: pharia-internal-rs-test
     /// The user (developers) token from the environment
     fn service_token() -> String {
-        dotenv().unwrap();
-        env::var("PHARIA_AI_SERVICE_TOKEN").unwrap()
+        _ = dotenv().unwrap();
+        env::var("PHARIA_AI_SERVICE_TOKEN")
+            .expect("PHARIA_AI_SERVICE_TOKEN environment variable not set")
     }
 
     /// The user (developers) token from the environment
     fn token() -> String {
-        dotenv().unwrap();
-        env::var("PHARIA_AI_TOKEN").unwrap()
+        _ = dotenv();
+        env::var("PHARIA_AI_TOKEN").expect("PHARIA_AI_TOKEN environment variable not set")
     }
 }
