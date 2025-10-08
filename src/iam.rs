@@ -305,13 +305,12 @@ mod tests {
     /// The user (developers) token from the environment
     fn service_token() -> String {
         _ = dotenv().unwrap();
-        env::var("PHARIA_AI_SERVICE_TOKEN")
-            .expect("PHARIA_AI_SERVICE_TOKEN environment variable not set")
+        env::var("PHARIA_AI_SERVICE_TOKEN").unwrap_or_else(|_| "DUMMY".to_owned())
     }
 
     /// The user (developers) token from the environment
     fn token() -> String {
         _ = dotenv();
-        env::var("PHARIA_AI_TOKEN").expect("PHARIA_AI_TOKEN environment variable not set")
+        env::var("PHARIA_AI_TOKEN").unwrap_or_else(|_| "DUMMY".to_owned())
     }
 }
