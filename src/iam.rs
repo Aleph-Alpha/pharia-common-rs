@@ -35,11 +35,14 @@ impl IamClient {
     }
 
     #[cfg(test)]
-    pub fn with_vcr(
-        base_url: String,
-        path_to_cassette: std::path::PathBuf,
-        vcr_mode: reqwest_vcr::VCRMode,
-    ) -> Self {
+    pub fn with_vcr(base_url: String, path_to_cassette: std::path::PathBuf) -> Self {
+        let cassette_does_exist = path_to_cassette.is_file();
+        let vcr_mode = if cassette_does_exist {
+            reqwest_vcr::VCRMode::Replay
+        } else {
+            reqwest_vcr::VCRMode::Record
+        };
+
         let middleware = reqwest_vcr::VCRMiddleware::try_from(path_to_cassette)
             .unwrap()
             .with_mode(vcr_mode)
@@ -171,7 +174,6 @@ pub enum Permission<'a> {
 #[cfg(test)]
 mod tests {
     use dotenvy::dotenv;
-    use reqwest_vcr::VCRMode;
     use std::{env, path::PathBuf};
 
     use super::{
@@ -185,12 +187,9 @@ mod tests {
         // without the specific token of the user who recorded it at hand.
         let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         cassette_path.push("tests/cassettes/valid_user_token.vcr.json");
-        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
-        // service.
-        let vcr_mode = VCRMode::Replay;
 
         // Given a client
-        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
 
         // When sending a check user request with a valid token
         let response = client.check_user(token(), &[]).await.unwrap();
@@ -212,14 +211,11 @@ mod tests {
         // without the specific token of the user who recorded it at hand.
         let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         cassette_path.push("tests/cassettes/invalid_user_token.vcr.json");
-        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
-        // service.
-        let vcr_mode = VCRMode::Replay;
 
         // Given a valid Pharia User Token
         dotenv().unwrap();
         let token = "I-AM-AN-INVALID-TOKEN";
-        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
 
         // When sending a check user request
         let result = client.check_user(token, &[]).await;
@@ -235,12 +231,9 @@ mod tests {
         // without the specific token of the user who recorded it at hand.
         let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         cassette_path.push("tests/cassettes/asking_for_permissions.vcr.json");
-        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
-        // service.
-        let vcr_mode = VCRMode::Replay;
 
         // Given a client
-        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
         let permissions = [
             Permission::KernelAccess,
             Permission::ExecuteJob,
@@ -272,12 +265,9 @@ mod tests {
         // without the specific token of the user who recorded it at hand.
         let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         cassette_path.push("tests/cassettes/asking_for_permissions_as_service.vcr.json");
-        // Change this to `VCRMode::Record` in order to rerun the tests against an actual IAM
-        // service.
-        let vcr_mode = VCRMode::Replay;
 
         // Given a client
-        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path, vcr_mode);
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
         let permissions = [Permission::Assistant, Permission::Numinous];
 
         // When sending a check user request with a token authorized for all permission it is
