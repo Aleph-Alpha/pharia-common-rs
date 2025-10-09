@@ -1,6 +1,6 @@
 # Internal Pharia Rust SDK
 
-A crate intended to be used by Aleph Alpha employees to write Rust Services for Pharia.
+Common utilities for Rust services deployed as part of Pharia AI
 
 ## About
 
