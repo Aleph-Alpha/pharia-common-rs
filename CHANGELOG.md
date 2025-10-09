@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1](https://github.com/Aleph-Alpha/pharia-common-rs/compare/v0.1.0...v0.1.1) - 2025-10-09
+
+### Other
+
+- Terser Readme
+
 ## 0.1.0 (2025-10-08)
 
 
