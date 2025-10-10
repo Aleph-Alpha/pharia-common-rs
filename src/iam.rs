@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
 /// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
+#[derive(Clone, Debug)]
 pub struct IamClient {
     /// Environment specific URL to Pharia IAM. E.g. <https://pharia-iam.product.pharia.com>
     base_url: String,
