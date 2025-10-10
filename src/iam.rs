@@ -10,6 +10,8 @@ use serde::{Deserialize, Serialize};
 /// URL of IAM in our production environment
 pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
+pub const IAM_STAGE_URL: &str = "https://pharia-iam.stage.product.pharia.com";
+
 /// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
 #[derive(Clone, Debug)]
 pub struct IamClient {
@@ -196,7 +198,7 @@ pub enum Permission<'a> {
     KernelAccess,
     /// Used by inference to decide wether a user is authorized to perform any kind of inference
     /// requests.
-    ExecuteJob,
+    ExecuteJobs,
     /// Is this user allowed to use this model? "*" Can be used as a model name in order to indicate
     /// access to all models.
     AccessModel {
@@ -230,7 +232,9 @@ impl From<CheckUserError> for AuthorizationError {
 #[cfg(test)]
 mod tests {
     use dotenvy::dotenv;
-    use std::{env, path::PathBuf};
+    use std::{borrow::Cow, env, path::PathBuf};
+
+    use crate::iam::IAM_STAGE_URL;
 
     use super::{
         CheckUserError, IAM_PRODUCTION_URL, IamClient, Permission, UserInfoAndPermissions,
@@ -291,7 +295,7 @@ mod tests {
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
         let permissions = [
             Permission::KernelAccess,
-            Permission::ExecuteJob,
+            Permission::ExecuteJobs,
             Permission::AccessAssistant,
             Permission::NuminousAccess,
             Permission::AccessModel { model: "*".into() },
@@ -325,7 +329,7 @@ mod tests {
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
         let permissions = [
             Permission::KernelAccess,
-            Permission::ExecuteJob,
+            Permission::ExecuteJobs,
             Permission::AccessAssistant,
             Permission::NuminousAccess,
             Permission::AccessModel { model: "*".into() },
@@ -378,6 +382,38 @@ mod tests {
         assert_eq!(expected, response);
     }
 
+    /// The [`Permission`]s enum is not exhaustive. If only testing as admin you get every, even
+    /// made up ones, mirrored. So we want to have a test to verify that permissions do exist, by
+    /// authorizing for them, with a
+    #[tokio::test]
+    async fn verify_predefined_permissions() {
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/verify_predefined_permissions.vcr.json");
+
+        // Given a client
+        let client = IamClient::with_vcr(IAM_STAGE_URL.to_owned(), cassette_path);
+        let permissions = [
+            Permission::AccessAssistant,
+            Permission::ExecuteJobs,
+            Permission::KernelAccess,
+            Permission::NuminousAccess,
+            Permission::AccessModel {
+                model: Cow::Borrowed("*"),
+            },
+        ];
+
+        // When sending a check user request with a token authorized for all permission it is
+        // asking for.
+        let result = client
+            .authorize(stage_non_admin_token(), &permissions)
+            .await;
+
+        // Then we recevie an answer, identifying the user and all the permissions are visible
+        // in the answer.
+        eprintln!("{:?}", result);
+        assert!(result.is_ok());
+    }
+
     /// Service token used for recording cassettes
     ///
     /// Credentials: pharia-internal-rs-test
@@ -391,5 +427,11 @@ mod tests {
     fn token() -> String {
         _ = dotenv();
         env::var("PHARIA_AI_TOKEN").unwrap_or_else(|_| "DUMMY".to_owned())
+    }
+
+    /// The user (developers) token from the environment
+    fn stage_non_admin_token() -> String {
+        _ = dotenv();
+        env::var("PHARIA_STAGE_NON_ADMIN").unwrap_or_else(|_| "DUMMY".to_owned())
     }
 }

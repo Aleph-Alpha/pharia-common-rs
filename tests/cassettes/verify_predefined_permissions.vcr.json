@@ -1,0 +1,52 @@
+{
+  "http_interactions": [
+    {
+      "response": {
+        "body": {
+          "encoding": null,
+          "string": "{\"sub\":\"341590180928438764\",\"email\":\"markus.klein+non-admin@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"AccessAssistant\"},{\"permission\":\"ExecuteJobs\"},{\"permission\":\"KernelAccess\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "http_version": "2",
+        "status": {
+          "code": 200,
+          "message": "OK"
+        },
+        "headers": {
+          "date": [
+            "Fri, 10 Oct 2025 14:52:10 GMT"
+          ],
+          "content-length": [
+            "280"
+          ],
+          "vary": [
+            "accept-encoding"
+          ],
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
+          "content-type": [
+            "application/json"
+          ]
+        }
+      },
+      "request": {
+        "uri": "https://pharia-iam.stage.product.pharia.com/check_user",
+        "body": {
+          "encoding": null,
+          "string": "{\"permissions\":[{\"permission\":\"AccessAssistant\"},{\"permission\":\"ExecuteJobs\"},{\"permission\":\"KernelAccess\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+        },
+        "method": "post",
+        "headers": {
+          "content-type": [
+            "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
+          ]
+        }
+      },
+      "recorded_at": "Fri, 10 Oct 2025 14:52:10 +0000"
+    }
+  ],
+  "recorded_with": "rVCR 0.3.0"
+}

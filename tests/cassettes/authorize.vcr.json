@@ -4,7 +4,7 @@
       "response": {
         "body": {
           "encoding": null,
-          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"AccessAssistant\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+          "string": "{\"sub\":\"295355180126307110\",\"email\":\"markus.klein@aleph-alpha.com\",\"email_verified\":true,\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJobs\"},{\"permission\":\"AccessAssistant\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
         },
         "http_version": "2",
         "status": {
@@ -12,20 +12,20 @@
           "message": "OK"
         },
         "headers": {
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
+          ],
           "content-type": [
             "application/json"
           ],
-          "content-length": [
-            "269"
+          "date": [
+            "Fri, 10 Oct 2025 14:50:14 GMT"
           ],
           "vary": [
             "accept-encoding"
           ],
-          "date": [
-            "Fri, 10 Oct 2025 12:30:43 GMT"
-          ],
-          "strict-transport-security": [
-            "max-age=31536000; includeSubDomains"
+          "content-length": [
+            "270"
           ]
         }
       },
@@ -33,19 +33,19 @@
         "uri": "https://pharia-iam.product.pharia.com/check_user",
         "body": {
           "encoding": null,
-          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJob\"},{\"permission\":\"AccessAssistant\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
+          "string": "{\"permissions\":[{\"permission\":\"KernelAccess\"},{\"permission\":\"ExecuteJobs\"},{\"permission\":\"AccessAssistant\"},{\"permission\":\"NuminousAccess\"},{\"permission\":\"AccessModel\",\"model\":\"*\"}]}"
         },
         "method": "post",
         "headers": {
-          "authorization": [
-            "TOKEN_REMOVED"
-          ],
           "content-type": [
             "application/json"
+          ],
+          "authorization": [
+            "TOKEN_REMOVED"
           ]
         }
       },
-      "recorded_at": "Fri, 10 Oct 2025 12:30:43 +0000"
+      "recorded_at": "Fri, 10 Oct 2025 14:50:14 +0000"
     }
   ],
   "recorded_with": "rVCR 0.3.0"
