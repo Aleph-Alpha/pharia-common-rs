@@ -72,7 +72,9 @@ impl IamClient {
         }
     }
 
-    /// One stop shop for both authentication and authorization.
+    /// One stop shop for both authentication and asking a set of permissions. While this method
+    /// returns a subset of permissions to which matches the privileges of the user it does not
+    /// perform the authorization check.
     ///
     /// # Parameters
     ///
@@ -137,6 +139,19 @@ impl IamClient {
 
         Ok(user_info)
     }
+
+    pub async fn authorize<'a>(
+        &self,
+        token: impl Display,
+        permissions: &'a [Permission<'a>],
+    ) -> Result<UserInfoAndPermissions, AuthorizationError> {
+        let user_info = self.check_user(token, permissions).await?;
+        if user_info.permissions == permissions {
+            Ok(user_info)
+        } else {
+            Err(AuthorizationError::Unauthorized)
+        }
+    }
 }
 
 /// Body of the the IAM `/check_user` route. The token is not passed in the body but in the
@@ -191,6 +206,25 @@ pub enum Permission<'a> {
         relation: Cow<'a, str>,
         object: Cow<'a, str>,
     },
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum AuthorizationError {
+    #[error("User is Unauthenticated. Token is invalid")]
+    Unauthenticated,
+    #[error("Unauthorized")]
+    Unauthorized,
+    #[error("User could not be authenticated due to connectivity issue:\n{0:#}")]
+    ConnectionError(#[source] anyhow::Error),
+}
+
+impl From<CheckUserError> for AuthorizationError {
+    fn from(err: CheckUserError) -> Self {
+        match err {
+            CheckUserError::Unauthenticated => AuthorizationError::Unauthenticated,
+            CheckUserError::ConnectionError(err) => AuthorizationError::ConnectionError(err),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -266,6 +300,40 @@ mod tests {
         // When sending a check user request with a token authorized for all permission it is
         // asking for.
         let response = client.check_user(token(), &permissions).await.unwrap();
+
+        // Then we recevie an answer, identifying the user and all the permissions are visible
+        // in the answer.
+        let expected = UserInfoAndPermissions {
+            sub: "295355180126307110".to_owned(),
+            email: Some("markus.klein@aleph-alpha.com".to_owned()),
+            email_verified: Some(true),
+            // It seems the IAM backend maintains order. So this assertion works.
+            permissions: permissions.to_vec(),
+        };
+        assert_eq!(expected, response);
+    }
+
+    #[tokio::test]
+    async fn authorize() {
+        // We are using cassets to record the request. This makes the test easy to execute even
+        // without a connection to Pharia. Additionally it allows us to execute the test even
+        // without the specific token of the user who recorded it at hand.
+        let mut cassette_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        cassette_path.push("tests/cassettes/authorize.vcr.json");
+
+        // Given a client
+        let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
+        let permissions = [
+            Permission::KernelAccess,
+            Permission::ExecuteJob,
+            Permission::AccessAssistant,
+            Permission::AccessNuminous,
+            Permission::AccessModel { model: "*".into() },
+        ];
+
+        // When sending a check user request with a token authorized for all permission it is
+        // asking for.
+        let response = client.authorize(token(), &permissions).await.unwrap();
 
         // Then we recevie an answer, identifying the user and all the permissions are visible
         // in the answer.
