@@ -79,9 +79,19 @@ impl IamClient {
     /// * `permissions`: A list of all permissions you are interested in. The response will contain
     ///   the subset of these permissions which are privileges the user has.
     ///
-    /// # Returns
+    /// Example Authorize Assistant Access against production instance
     ///
-    /// A `Result` containing the user information and permissions, or an error.
+    /// ```
+    /// pub use pharia_common::{IamClient, Permission, IAM_PRODUCTION_URL, CheckUserError};
+    ///
+    /// pub async fn is_authorized(token: &str) -> Result<bool, CheckUserError> {
+    ///     let iam = IamClient::new(IAM_PRODUCTION_URL.to_owned());
+    ///     let permissions = [Permission::AssistantAccess];
+    ///     let user_info = iam.check_user(token, &permissions).await?;
+    ///     let is_authorized = user_info.permissions == permissions;
+    ///     Ok(is_authorized)
+    /// }
+    /// ```
     pub async fn check_user<'a>(
         &self,
         token: impl Display,
