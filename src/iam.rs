@@ -20,6 +20,7 @@ pub struct IamClient {
 }
 
 impl IamClient {
+    /// Construct a new client using the respective IAM instance. E.g. [`IAM_PRODUCTION_URL`]
     pub fn new(base_url: String) -> Self {
         let client = Client::builder().use_rustls_tls().build().expect(
             "Must be able to initialize TLS backend and resolver must be able to load system \
@@ -71,6 +72,16 @@ impl IamClient {
     }
 
     /// One stop shop for both authentication and authorization.
+    ///
+    /// # Parameters
+    ///
+    /// * `token`: Service or user token used for authentication.
+    /// * `permissions`: A list of all permissions you are interested in. The response will contain
+    ///   the subset of these permissions which are privileges the user has.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the user information and permissions, or an error.
     pub async fn check_user<'a>(
         &self,
         token: impl Display,
@@ -130,14 +141,14 @@ struct CheckUserRequestBody<'a> {
 #[derive(Deserialize, PartialEq, Eq, Debug)]
 pub struct UserInfoAndPermissions {
     /// Unique ID of the User
-    sub: String,
+    pub sub: String,
     /// Email of the user. `None` for Service users
-    email: Option<String>,
+    pub email: Option<String>,
     /// May be `None` for Service Users
-    email_verified: Option<bool>,
+    pub email_verified: Option<bool>,
     /// List of requested permissions, which are privieleges of the User Service. They are in the
     /// same order as in the query
-    permissions: Vec<Permission<'static>>,
+    pub permissions: Vec<Permission<'static>>,
 }
 
 /// An error returned by [`IamClient::check_user`]. Note that this does **not** include
