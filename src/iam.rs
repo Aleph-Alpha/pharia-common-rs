@@ -76,27 +76,13 @@ impl IamClient {
 
     /// One stop shop for both authentication and asking a set of permissions. While this method
     /// returns a subset of permissions to which matches the privileges of the user it does not
-    /// perform the authorization check.
+    /// perform the authorization check. Call `authorize`
     ///
     /// # Parameters
     ///
     /// * `token`: Service or user token used for authentication.
     /// * `permissions`: A list of all permissions you are interested in. The response will contain
     ///   the subset of these permissions which are privileges the user has.
-    ///
-    /// Example Authorize Assistant Access against production instance
-    ///
-    /// ```
-    /// pub use pharia_common::{IamClient, Permission, IAM_PRODUCTION_URL, CheckUserError};
-    ///
-    /// pub async fn is_authorized(token: &str) -> Result<bool, CheckUserError> {
-    ///     let iam = IamClient::new(IAM_PRODUCTION_URL.to_owned());
-    ///     let permissions = [Permission::AccessAssistant];
-    ///     let user_info = iam.check_user(token, &permissions).await?;
-    ///     let is_authorized = user_info.permissions == permissions;
-    ///     Ok(is_authorized)
-    /// }
-    /// ```
     pub async fn check_user<'a>(
         &self,
         token: impl Display,
@@ -142,6 +128,27 @@ impl IamClient {
         Ok(user_info)
     }
 
+    /// Same as `check_user` but also performs the authorization check and fails if the user is not
+    /// authorized.
+    ///
+    /// # Parameters
+    ///
+    /// * `token`: Service or user token used for authentication.
+    /// * `permissions`: A list of all permissions you are interested in. The response will contain
+    ///   the subset of these permissions which are privileges the user has.
+    ///
+    /// Example: Check if the user has the `AccessAssistant` permission.
+    ///
+    /// ```
+    /// use pharia_common::{Permission, IamClient, AuthorizationError, IAM_PRODUCTION_URL};
+    ///
+    /// pub async fn authorize(token: &str) -> Result<(), AuthorizationError> {
+    ///     let iam = IamClient::new(IAM_PRODUCTION_URL.to_owned());
+    ///     let permissions = [Permission::AccessAssistant];
+    ///     let user_info = iam.authorize(token, &permissions).await?;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn authorize<'a>(
         &self,
         token: impl Display,
