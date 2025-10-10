@@ -191,7 +191,7 @@ pub enum CheckUserError {
 #[serde(tag = "permission")]
 pub enum Permission<'a> {
     AccessAssistant,
-    AccessNuminous,
+    NuminousAccess,
     /// The kernel uses this permission to authorize skill execution
     KernelAccess,
     /// Used by inference to decide wether a user is authorized to perform any kind of inference
@@ -293,7 +293,7 @@ mod tests {
             Permission::KernelAccess,
             Permission::ExecuteJob,
             Permission::AccessAssistant,
-            Permission::AccessNuminous,
+            Permission::NuminousAccess,
             Permission::AccessModel { model: "*".into() },
         ];
 
@@ -327,7 +327,7 @@ mod tests {
             Permission::KernelAccess,
             Permission::ExecuteJob,
             Permission::AccessAssistant,
-            Permission::AccessNuminous,
+            Permission::NuminousAccess,
             Permission::AccessModel { model: "*".into() },
         ];
 
@@ -357,7 +357,7 @@ mod tests {
 
         // Given a client
         let client = IamClient::with_vcr(IAM_PRODUCTION_URL.to_owned(), cassette_path);
-        let permissions = [Permission::AccessAssistant, Permission::AccessNuminous];
+        let permissions = [Permission::AccessAssistant, Permission::NuminousAccess];
 
         // When sending a check user request with a token authorized for all permission it is
         // asking for.
