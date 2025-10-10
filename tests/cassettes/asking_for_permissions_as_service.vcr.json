@@ -12,20 +12,20 @@
           "message": "OK"
         },
         "headers": {
-          "content-type": [
-            "application/json"
+          "strict-transport-security": [
+            "max-age=31536000; includeSubDomains"
           ],
           "vary": [
             "accept-encoding"
           ],
+          "content-type": [
+            "application/json"
+          ],
           "date": [
-            "Fri, 10 Oct 2025 10:07:18 GMT"
+            "Fri, 10 Oct 2025 12:30:43 GMT"
           ],
           "content-length": [
             "80"
-          ],
-          "strict-transport-security": [
-            "max-age=31536000; includeSubDomains"
           ]
         }
       },
@@ -33,19 +33,19 @@
         "uri": "https://pharia-iam.product.pharia.com/check_user",
         "body": {
           "encoding": null,
-          "string": "{\"permissions\":[{\"permission\":\"AccessAssistant\"},{\"permission\":\"AccessNuminous\"}]}"
+          "string": "{\"permissions\":[{\"permission\":\"AccessAssistant\"},{\"permission\":\"NuminousAccess\"}]}"
         },
         "method": "post",
         "headers": {
-          "content-type": [
-            "application/json"
-          ],
           "authorization": [
             "TOKEN_REMOVED"
+          ],
+          "content-type": [
+            "application/json"
           ]
         }
       },
-      "recorded_at": "Fri, 10 Oct 2025 10:07:18 +0000"
+      "recorded_at": "Fri, 10 Oct 2025 12:30:43 +0000"
     }
   ],
   "recorded_with": "rVCR 0.3.0"
