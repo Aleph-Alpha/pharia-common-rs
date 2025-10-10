@@ -87,7 +87,7 @@ impl IamClient {
     ///
     /// pub async fn is_authorized(token: &str) -> Result<bool, CheckUserError> {
     ///     let iam = IamClient::new(IAM_PRODUCTION_URL.to_owned());
-    ///     let permissions = [Permission::AssistantAccess];
+    ///     let permissions = [Permission::AccessAssistant];
     ///     let user_info = iam.check_user(token, &permissions).await?;
     ///     let is_authorized = user_info.permissions == permissions;
     ///     Ok(is_authorized)
