@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2](https://github.com/Aleph-Alpha/pharia-common-rs/compare/v0.1.1...v0.1.2) - 2025-10-10
+
+### Added
+
+- IamClient is Debug and Clone
+
 ## [0.1.1](https://github.com/Aleph-Alpha/pharia-common-rs/compare/v0.1.0...v0.1.1) - 2025-10-10
 
 ### Other
