@@ -7,6 +7,11 @@ description = "Common utilities for Rust services deployed as part of Pharia AI"
 documentation = "https://docs.rs/pharia-common"
 repository = "https://github.com/Aleph-Alpha/pharia-common-rs"
 
+[features]
+# If activated, standard headers for open telemetry will be set to requests made by your
+# application through pharia common. The context will be fetched from the "current" tracing context.
+opentelemetry = ["dep:tracing", "dep:tracing-opentelemetry", "dep:opentelemetry"]
+
 [dependencies]
 # We use this for opaque errors caused by the runtime
 anyhow = "1.0.99"
@@ -29,6 +34,11 @@ serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.143"
 # We use this for custom domain specific errors
 thiserror = "2.0.16"
+# We use the current tracing context to fetch the information for the opent telemetry tracing
+# headers.
+tracing = { version = "0.1.41", optional = true }
+tracing-opentelemetry = { version = "0.32.0", optional = true }
+opentelemetry = { version = "0.31.0", optional = true }
 
 [dev-dependencies]
 dotenvy = "0.15.7"

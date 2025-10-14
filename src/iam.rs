@@ -7,6 +7,8 @@ use reqwest::{Client, StatusCode};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use serde::{Deserialize, Serialize};
 
+use crate::open_telemetry::RequestBuilderExt;
+
 /// URL of IAM in our production environment
 pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
@@ -94,6 +96,7 @@ impl IamClient {
             .http_client
             .post(format!("{base_url}/check_user", base_url = self.base_url))
             .bearer_auth(token)
+            .with_opentelemery_headers()
             .json(&request_body)
             .send()
             .await
