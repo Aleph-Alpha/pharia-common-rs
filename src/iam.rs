@@ -1,45 +1,52 @@
 //! **IAM** is short for **I**dentity **A**ccess **M**anagement. This module contains opinionated
 //! adapters to connect to the internal Pharia IAM solution.
 
+#[cfg(test)]
+use std::path::Path;
 use std::{borrow::Cow, fmt::Display};
 
 use reqwest::{Client, StatusCode};
-use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
+use reqwest_middleware::{ClientBuilder, ClientWithMiddleware, Middleware};
 use serde::{Deserialize, Serialize};
 
 /// URL of IAM in our production environment
 pub const IAM_PRODUCTION_URL: &str = "https://pharia-iam.product.pharia.com";
 
+/// URL of IAM in our staging environment
 pub const IAM_STAGE_URL: &str = "https://pharia-iam.stage.product.pharia.com";
 
-/// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
-#[derive(Clone, Debug)]
-pub struct IamClient {
-    /// Environment specific URL to Pharia IAM. E.g. <https://pharia-iam.product.pharia.com>
+pub struct IamClientBuilder {
     base_url: String,
-    /// Used for sending the http requests. We are using `ClientWithMiddleware` to allow for VCR
-    /// recording in tests.
-    http_client: ClientWithMiddleware,
+    client_builder: ClientBuilder,
 }
 
-impl IamClient {
-    /// Construct a new client using the respective IAM instance. E.g. [`IAM_PRODUCTION_URL`]
+impl IamClientBuilder {
+    /// Create a builder for the IAM client. Use this builder if you want to attach middleware, for
+    /// testing, opentelemetry or any other purpose.
     pub fn new(base_url: String) -> Self {
         let client = Client::builder().use_rustls_tls().build().expect(
             "Must be able to initialize TLS backend and resolver must be able to load system \
             configuration.",
         );
 
-        let http_client: ClientWithMiddleware = ClientBuilder::new(client).build();
-
-        Self {
+        let client_builder = ClientBuilder::new(client);
+        IamClientBuilder {
             base_url,
-            http_client,
+            client_builder,
         }
     }
 
+    /// Attach a middleware to the client
+    pub fn with_middleware(mut self, middleware: impl Middleware) -> Self {
+        self.client_builder = self.client_builder.with(middleware);
+        self
+    }
+
     #[cfg(test)]
-    pub fn with_vcr(base_url: String, path_to_cassette: std::path::PathBuf) -> Self {
+    /// Register a VCR middleware which would replay the response from the cassette, rather than
+    /// making an actual request. If the cassette does not exist, an actual request will be made
+    /// and the cassette will be recorded.
+    pub fn with_vcr(self, path_to_cassette: std::path::PathBuf) -> Self {
         let cassette_does_exist = path_to_cassette.is_file();
         let vcr_mode = if cassette_does_exist {
             reqwest_vcr::VCRMode::Replay
@@ -56,22 +63,43 @@ impl IamClient {
                 }
             });
 
-        IamClient::with_middleware(base_url, middleware)
+        self.with_middleware(middleware)
+    }
+
+    /// Construct the IAM client
+    pub fn build(self) -> IamClient {
+        let client = self.client_builder.build();
+        IamClient {
+            base_url: self.base_url,
+            http_client: client,
+        }
+    }
+}
+
+/// Client forPharia **I**dentity **A**ccess **M**anagement. Authenticate and authorize users.
+#[derive(Clone, Debug)]
+pub struct IamClient {
+    /// Environment specific URL to Pharia IAM. E.g. <https://pharia-iam.product.pharia.com>
+    base_url: String,
+    /// Used for sending the http requests. We are using `ClientWithMiddleware` to allow for VCR
+    /// recording in tests.
+    http_client: ClientWithMiddleware,
+}
+
+impl IamClient {
+    /// Use this instead of [`IamClient::new`] if you want to have additional middleware.
+    pub fn builder(base_url: String) -> IamClientBuilder {
+        IamClientBuilder::new(base_url)
+    }
+
+    /// Construct a new client using the respective IAM instance. E.g. [`IAM_PRODUCTION_URL`]
+    pub fn new(base_url: String) -> Self {
+        Self::builder(base_url).build()
     }
 
     #[cfg(test)]
-    fn with_middleware(base_url: String, middleware: impl reqwest_middleware::Middleware) -> Self {
-        let client = Client::builder().use_rustls_tls().build().expect(
-            "Must be able to initialize TLS backend and resolver must be able to load system \
-            configuration.",
-        );
-
-        let http_client: ClientWithMiddleware = ClientBuilder::new(client).with(middleware).build();
-
-        IamClient {
-            base_url,
-            http_client,
-        }
+    pub fn with_vcr(base_url: String, path_to_cassette: std::path::PathBuf) -> Self {
+        Self::builder(base_url).with_vcr(path_to_cassette).build()
     }
 
     /// One stop shop for both authentication and asking a set of permissions. While this method
