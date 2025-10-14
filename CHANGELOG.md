@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.1](https://github.com/Aleph-Alpha/pharia-common-rs/compare/v0.4.0...v0.4.1) - 2025-10-14
+
+### Added
+
+- Allow registering additional middleware with IAM client
+
 ## [0.4.0](https://github.com/Aleph-Alpha/pharia-common-rs/compare/v0.3.0...v0.4.0) - 2025-10-10
 
 ### Added
