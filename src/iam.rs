@@ -1,8 +1,6 @@
 //! **IAM** is short for **I**dentity **A**ccess **M**anagement. This module contains opinionated
 //! adapters to connect to the internal Pharia IAM solution.
 
-#[cfg(test)]
-use std::path::Path;
 use std::{borrow::Cow, fmt::Display};
 
 use reqwest::{Client, StatusCode};
@@ -40,6 +38,12 @@ impl IamClientBuilder {
     pub fn with_middleware(mut self, middleware: impl Middleware) -> Self {
         self.client_builder = self.client_builder.with(middleware);
         self
+    }
+
+    #[cfg(feature = "opentelemetry")]
+    pub fn with_opentelemetry(self) -> Self {
+        let middleware = reqwest_tracing::TracingMiddleware::default();
+        self.with_middleware(middleware)
     }
 
     #[cfg(test)]
