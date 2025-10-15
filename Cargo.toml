@@ -12,7 +12,7 @@ opentelemetry = ["dep:reqwest-tracing", "dep:opentelemetry", "dep:tracing", "dep
 
 [dependencies]
 # We use this for opaque errors caused by the runtime
-anyhow = "1.0.99"
+anyhow = "1.0.100"
 # Using native roots explicitly is desired. The default-tls assumes a Saas operation and that we
 # could redeploy the containers in case we want certificates to change. Since we have a slightly
 # less default on-premise buisness model, native-roots is for us.
