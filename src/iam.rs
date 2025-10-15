@@ -40,6 +40,8 @@ impl IamClientBuilder {
         self
     }
 
+    /// Inject a middleware into the client extracting the open telemetry context from the current
+    /// tracing context and propagating the open telemetry request headers.
     #[cfg(feature = "opentelemetry")]
     pub fn with_opentelemetry(self) -> Self {
         let middleware = reqwest_tracing::TracingMiddleware::default();
