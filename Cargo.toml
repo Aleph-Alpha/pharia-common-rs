@@ -44,4 +44,4 @@ tokio = { version = "1.47.1", features = ["macros", "test-util"] }
 # expose this as a convinience to our users, too.
 reqwest-vcr = "0.3.0"
 opentelemetry_sdk = "0.31.0"
-tracing-subscriber = "0.3.20"
+tracing-subscriber = "0.3.22"
